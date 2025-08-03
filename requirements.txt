@@ -1,0 +1,11 @@
+fastapi
+uvicorn
+beautifulsoup4
+duckduckgo-search
+openai
+python-dotenv
+requests
+selenium
+tweepy
+playwright
+llama-cpp-python
