@@ -14,8 +14,8 @@ extended to chat bots, web apps or mobile clients.
   web sites and performing actions in a human‑like manner.
 * Command line interface with ``!websearch``, ``!amazon``, ``!twitter`` and
   ``!browser`` commands.
-* Pluggable LLM backend: choose OpenAI, a local ``llama.cpp`` model or any
-  ``transformers`` model via environment variables.
+* Pluggable LLM backend: choose OpenAI, a local ``llama.cpp`` model, any
+  ``transformers`` model or a custom API served on localhost/LAN.
 * After each step the LLM can perform a short reflection.
 * The architecture separates planning, execution and the HTTP layer which makes
   it easy to integrate the core logic elsewhere.
@@ -59,6 +59,15 @@ Environment variables such as API keys can be stored in a ``.env`` file.  A
 ``.env.example`` template is provided for convenience.  **Never commit real
 credentials to source control.**  Store API keys and passwords in ``.env`` or
 the Windows credential manager.
+
+### Local LLM API
+
+The agent can delegate all model inference to an LLM API server running on
+the host machine.  Start your preferred server (e.g. ``llama.cpp`` with an
+HTTP wrapper) and expose it on ``127.0.0.1`` or a trusted LAN address.  In the
+``.env`` file set ``LLM_PROVIDER=api`` and point ``LLM_API_URL`` to the server
+URL.  Optionally provide ``LLM_API_KEY`` if the server requires authentication.
+**Do not expose the API to the public internet.**
 
 ### Security notes
 
