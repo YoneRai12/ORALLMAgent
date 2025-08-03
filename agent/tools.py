@@ -19,7 +19,6 @@ import tweepy
 # Browser automation imports are optional; Playwright is heavy and may not be
 # installed in minimal environments.  Import lazily inside the function.
 
-
 def web_search(query: str) -> str:
     """Search the web via DuckDuckGo and return a short summary."""
 
