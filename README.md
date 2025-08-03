@@ -73,7 +73,7 @@ URL.  Optionally provide ``LLM_API_KEY`` if the server requires authentication.
 
 Credentials must never be hardcoded.  Populate the ``.env`` file or the
 credential manager and reference variables from automation steps using the
-``env`` field.  The browser tool intentionally stops when CAPTCHA or two‑factor
+``env`` field.  The browser tool intentionally stops when CAPTCHA or two-factor
 authentication is detected so the user can intervene manually.
 
 ### Command line usage
@@ -84,7 +84,7 @@ The ``cli.py`` helper exposes a very small command interface:
 python cli.py "!websearch sushi"
 python cli.py "!amazon raspberry pi"
 python cli.py "!twitter tweet hello world"
-python cli.py "!browser https://example.com '[{"action":"click","selector":"#login"}]'"
+python cli.py "!browser https://example.com '[{\"action\":\"click\",\"selector\":\"#login\"}]'"
 ```
 
 Twitter commands require API credentials.  Amazon scraping is intended for

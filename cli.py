@@ -47,6 +47,7 @@ def main() -> None:
             print("usage: !browser <url> <json_steps>")
         else:
             import json
+
             url = parts[1]
             steps = json.loads(parts[2])
             print(browser_action(url, steps))
