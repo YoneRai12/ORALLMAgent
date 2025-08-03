@@ -11,6 +11,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
 import os
+import requests
 
 try:  # Optional import; the package may not be installed.
     import openai  # type: ignore
@@ -43,6 +44,7 @@ class LLMClient:
     def __init__(self, provider: Optional[str] = None, api_key: Optional[str] = None) -> None:
         self.provider = provider or os.getenv("LLM_PROVIDER", "stub")
         self.api_key = api_key or os.getenv("LLM_API_KEY") or os.getenv("OPENAI_API_KEY")
+        self.api_url = os.getenv("LLM_API_URL")
         # Optional backends for local models
         self._llama = None
         self._pipe = None
@@ -73,6 +75,19 @@ class LLMClient:
             )
             plan_text: str = response["choices"][0]["message"]["content"]  # type: ignore[index]
             return [Step(tool="echo", args={"text": plan_text}, description="raw plan")]
+        if self.provider == "api" and self.api_url:
+            headers = {}
+            if self.api_key:
+                headers["Authorization"] = f"Bearer {self.api_key}"
+            try:
+                resp = requests.post(self.api_url, json={"prompt": f"Plan steps to: {instruction}"}, headers=headers, timeout=60)
+                resp.raise_for_status()
+                data = resp.json()
+                plan_text = data.get("text") or data.get("output") or ""
+                if plan_text:
+                    return [Step(tool="echo", args={"text": plan_text}, description="raw plan")]
+            except Exception:
+                pass
         if self.provider == "llama_cpp" and self._llama is not None:
             output = self._llama(f"Plan steps to: {instruction}", max_tokens=128)
             plan_text = output["choices"][0]["text"]  # type: ignore[index]
@@ -105,6 +120,17 @@ class LLMClient:
                 messages=[{"role": "user", "content": f"Reflect on: {result}"}],
             )
             return response["choices"][0]["message"]["content"]  # type: ignore[index]
+        if self.provider == "api" and self.api_url:
+            headers = {}
+            if self.api_key:
+                headers["Authorization"] = f"Bearer {self.api_key}"
+            try:
+                resp = requests.post(self.api_url, json={"prompt": f"Reflect on: {result}"}, headers=headers, timeout=60)
+                resp.raise_for_status()
+                data = resp.json()
+                return data.get("text") or data.get("output") or result
+            except Exception:
+                return result
         if self.provider == "llama_cpp" and self._llama is not None:
             output = self._llama(f"Reflect on: {result}", max_tokens=64)
             return output["choices"][0]["text"]  # type: ignore[index]
